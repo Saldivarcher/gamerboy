@@ -16,6 +16,6 @@ public:
 private:
   CPU cpu;
   Memory mem;
-  Cartridge cartridge;
+  NoMbc cartridge;
 };
 } // namespace gb

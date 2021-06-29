@@ -2,8 +2,10 @@
 
 namespace gb {
 
-u_int8_t Cartridge::read(u_int16_t addr) {
-  return static_cast<int>(this->rom_data.at(addr));
+u_int8_t NoMbc::read(u_int16_t addr) {
+  return static_cast<u_int8_t>(rom_data.at(addr));
 }
+
+void NoMbc::write(u_int16_t addr, u_int8_t value) { return; }
 
 } // namespace gb

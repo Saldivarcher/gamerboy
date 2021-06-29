@@ -42,32 +42,8 @@ static void error(const char *msg, uint8_t status) {
   std::exit(status);
 }
 
-static std::array<uint8_t, 0xFF> get_boot_rom_data() {
-  std::ifstream ifs(fs::path("../boot_rom/dmg_boot.bin"),
-                    std::ios::binary | std::ios::ate);
-  auto end = ifs.tellg();
-
-  ifs.seekg(0, std::ios::beg);
-
-  auto size = std::size_t(end - ifs.tellg());
-
-  if (!size)
-    return {};
-
-  std::array<uint8_t, 0xFF> buffer;
-
-  if (!ifs.read((char *)buffer.data(), buffer.size()))
-    error("Cannot insert ROM data!", 1);
-
-  return buffer;
-}
-
-static std::vector<std::byte> get_rom_data(fs::path &p) {
+static std::vector<std::byte> get_data(const fs::path &&p) {
   std::ifstream ifs(p, std::ios::binary | std::ios::ate);
-
-  if (!ifs)
-    error("Could not open the ROM!", 1);
-
   auto end = ifs.tellg();
 
   ifs.seekg(0, std::ios::beg);
@@ -83,6 +59,14 @@ static std::vector<std::byte> get_rom_data(fs::path &p) {
     error("Cannot insert ROM data!", 1);
 
   return buffer;
+}
+
+static std::vector<std::byte> get_boot_rom_data() {
+  return get_data(fs::path("../boot_rom/dmg_boot.bin"));
+}
+
+static std::vector<std::byte> get_rom_data(const fs::path &p) {
+  return get_data(std::move(p));
 }
 
 } // namespace utility
