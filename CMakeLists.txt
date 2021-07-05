@@ -12,7 +12,6 @@ include_directories(SYSTEM ${SDL2_INCLUDE_DIR})
 include_directories(include)
 
 set(gamerboy_sources
-	src/driver.cc
 	src/cartridge.cc
 	src/memory.cc
 	src/cpu.cc

@@ -43,6 +43,10 @@ static void error(const char *msg, uint8_t status) {
 }
 
 static std::vector<std::byte> get_data(const fs::path &&p) {
+
+  if (!fs::exists(p))
+    utility::error("Does this path to rom really exist?", 1);
+
   std::ifstream ifs(p, std::ios::binary | std::ios::ate);
   auto end = ifs.tellg();
 

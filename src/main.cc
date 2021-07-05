@@ -1,4 +1,4 @@
-#include "driver.h"
+#include "gameboy.h"
 #include "utility.h"
 
 #include <filesystem>
@@ -9,9 +9,8 @@ int main(int argc, char **argv) {
   if (argc < 2)
     gb::utility::error("Please pass in the path to the ROM", 1);
 
-  gb::Driver d(argv[1]);
-
-  d.drive();
+  gb::Gameboy gb(argv[1]);
+  gb.on();
 
   return 0;
 }

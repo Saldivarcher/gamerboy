@@ -101,7 +101,7 @@ private:
       {0x06, &CPU::op_ld_hr_d8},
       {0x07, &CPU::op_rlca},
       {0x08, &CPU::op_ld_da16_sp},
-      {0x09, &CPU::op_add_hl_rr},
+      // {0x09, &CPU::op_add_hl_rr},
       {0x0A, &CPU::op_ld_a_drr},
       {0x0B, &CPU::op_dec_rr},
       {0x0C, &CPU::op_inc_lr},
