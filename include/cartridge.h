@@ -22,22 +22,22 @@ public:
       return static_cast<u_int16_t>(rom[address]);
     };
 
-    this->ram_size = ram_sizes[rom_cast(0x149)];
-    this->version = rom_cast(0x14C);
+    m_ram_size = ram_sizes[rom_cast(0x149)];
+    m_version = rom_cast(0x14C);
   }
 
-  u_int32_t get_ram_size() { return ram_size; }
-  u_int8_t get_version() { return version; }
+  u_int32_t get_ram_size() { return m_ram_size; }
+  u_int8_t get_version() { return m_version; }
 
 private:
-  u_int32_t ram_size;
-  u_int8_t version;
+  u_int32_t m_ram_size;
+  u_int8_t m_version;
 };
 
 class Cartridge {
 public:
   Cartridge(const std::vector<std::byte> &data)
-      : rom_data(data), cartridge_info(rom_data){};
+      : m_rom_data(data), m_cartridge_info(m_rom_data){};
 
   virtual ~Cartridge() = default;
 
@@ -45,10 +45,10 @@ public:
   virtual void write(u_int16_t addr, u_int8_t value) = 0;
 
 protected:
-  const std::vector<std::byte> &rom_data;
-  const std::vector<std::byte> ram_data;
+  const std::vector<std::byte> &m_rom_data;
+  const std::vector<std::byte> m_ram_data;
 
-  CartridgeInformation cartridge_info;
+  CartridgeInformation m_cartridge_info;
 };
 
 class NoMbc : protected Cartridge {

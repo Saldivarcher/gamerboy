@@ -14,8 +14,8 @@ public:
   void run();
 
 private:
-  CPU cpu;
-  Memory mem;
-  NoMbc cartridge;
+  CPU m_cpu;
+  Memory m_mem;
+  NoMbc m_cartridge;
 };
 } // namespace gb

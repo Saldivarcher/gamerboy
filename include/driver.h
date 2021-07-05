@@ -25,19 +25,19 @@ public:
   void drive();
   void process();
 
-  inline bool did_quit() { return this->did_close; }
+  inline bool did_quit() { return m_did_close; }
 
 private:
-  bool did_close;
-  fs::path rom_path;
+  bool m_did_close;
+  fs::path m_rom_path;
 
-  Gameboy gameboy;
+  Gameboy m_gameboy;
 
-  std::vector<std::byte> rom_data;
+  std::vector<std::byte> m_rom_data;
 
-  utility::sdl_window_ptr window = {nullptr, SDL_DestroyWindow};
-  utility::sdl_renderer_ptr renderer = {nullptr, SDL_DestroyRenderer};
-  utility::sdl_texture_ptr texture = {nullptr, SDL_DestroyTexture};
+  utility::sdl_window_ptr m_window = {nullptr, SDL_DestroyWindow};
+  utility::sdl_renderer_ptr m_renderer = {nullptr, SDL_DestroyRenderer};
+  utility::sdl_texture_ptr m_texture = {nullptr, SDL_DestroyTexture};
 };
 
 } // namespace gb

@@ -3,8 +3,8 @@
 namespace gb {
 
 Gameboy::Gameboy(const std::vector<std::byte> &v)
-    : cartridge(v), cpu(cartridge, mem), mem(cartridge) {}
+    : m_cartridge(v), m_cpu(m_cartridge, m_mem), m_mem(m_cartridge) {}
 
-void Gameboy::run() { this->cpu.cycle(); }
+void Gameboy::run() { m_cpu.cycle(); }
 
 } // namespace gb

@@ -18,16 +18,16 @@ public:
   void write_memory(uint16_t addr, uint8_t value);
 
 private:
-  NoMbc &cartridge;
+  NoMbc &m_cartridge;
 
   // Gameboys have a 8192 bytes of ram.
-  std::array<uint8_t, 0x2000> ram;
+  std::array<uint8_t, 0x2000> m_ram;
 
   // The boot rom only has 255 bytes.
-  std::vector<std::byte> boot_rom;
+  std::vector<std::byte> m_boot_rom;
 
-  bool boot_rom_disabled = false;
-  inline bool is_boot_rom_disabled() { return this->boot_rom_disabled; };
+  bool m_boot_rom_disabled = false;
+  inline bool is_boot_rom_disabled() { return m_boot_rom_disabled; };
 
   // using memory_method_t = std::function<uint8_t(Memory &, uint8_t)>;
   typedef uint8_t (Memory::*memory_read_method_t)(uint16_t);
@@ -41,7 +41,7 @@ private:
   uint8_t read_banked_ram(uint16_t addr);
   uint8_t read_high_memory(uint16_t addr);
 
-  std::map<utility::Mask, memory_read_method_t, std::less<>> read_map = {
+  std::map<utility::Mask, memory_read_method_t, std::less<>> m_read_map = {
       {utility::Mask{0x0000, 0xF000}, &Memory::read_rom},
       {utility::Mask{0x1000, 0xF000}, &Memory::read_rom},
       {utility::Mask{0x2000, 0xF000}, &Memory::read_rom},
@@ -67,7 +67,7 @@ private:
   void write_banked_ram(uint16_t addr, uint8_t value);
   void write_high_memory(uint16_t addr, uint8_t value);
 
-  std::map<utility::Mask, memory_write_method_t, std::less<>> write_map = {
+  std::map<utility::Mask, memory_write_method_t, std::less<>> m_write_map = {
       {utility::Mask{0x0000, 0xF000}, &Memory::write_mbc},
       {utility::Mask{0x1000, 0xF000}, &Memory::write_mbc},
       {utility::Mask{0x2000, 0xF000}, &Memory::write_mbc},
