@@ -30,7 +30,7 @@ void CPU::op_ld_rr_d16(uint8_t opcode) {
     return value;
   };
 
-  uint8_t register_id = (opcode >> 4) + 1;
+  uint8_t register_id = get_register(opcode);
   uint16_t value = compose_word();
   m_registers[register_id] = value;
 }
@@ -61,13 +61,15 @@ void CPU::op_ld_da16_sp(uint8_t opcode) {
 }
 
 // Opcode: x6
+// r=n
 void CPU::op_ld_hr_d8(uint8_t opcode) {
   uint8_t register_id = get_register(opcode);
   m_registers[register_id] &= 0xFF;
   m_registers[register_id] |= cycle_read(m_pc++) << 8;
 }
 
-// Opocde: xE
+// Opcode: xE
+// r=n
 void CPU::op_ld_lr_d8(uint8_t opcode) {
   uint8_t register_id = get_register(opcode);
   m_registers[register_id] &= 0xFF;
@@ -264,5 +266,25 @@ void CPU::op_rra(uint8_t opcode) {
 
   m_registers[Registers::AF].set_word(a, f);
 }
+
+// Opcode: x9
+// Flags: -0hc
+// HL = HL+rr ; rr may be BC,DE,HL,SP
+void CPU::op_add_hl_rr(uint8_t opcode) {
+  int8_t register_id = get_register(opcode);
+  uint16_t rr = m_registers[register_id];
+  uint16_t hl = m_registers[Registers::HL];
+
+  uint16_t result = hl + rr;
+
+  m_registers[Registers::AF].set_flag(Flags::SUBTRACT_FLAG, false);
+  m_registers[Registers::AF].set_flag(Flags::CARRY_FLAG,
+                                      (result & 0x10000) != 0);
+  m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG,
+                                      (rr & 0xFFF) + (hl + 0xFFF) > 0xFFF);
+  m_registers[Registers::HL].set_word(result);
+}
+
+void CPU::op_stop(uint8_t opcode) {}
 
 } // namespace gb
