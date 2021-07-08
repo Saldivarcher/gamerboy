@@ -6,7 +6,7 @@ project(gamerboy)
 # Enable C++20 (Required)
 set(CMAKE_CXX_STANDARD 20)
 
-find_package(SDL2 REQUIRED)
+find_package(SDL2 REQUIRED SDL2)
 include_directories(SYSTEM ${SDL2_INCLUDE_DIR})
 
 include_directories(include)
@@ -21,4 +21,4 @@ set(gamerboy_sources
 
 add_executable(gamerboy ${gamerboy_sources})
 
-target_link_libraries(gamerboy PRIVATE SDL2::SDL2)
+target_link_libraries(gamerboy PRIVATE SDL2)

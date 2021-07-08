@@ -1,0 +1,60 @@
+name: Linux Gamerboy Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config:
+          - {
+              name: "Clang build",
+              cc: "clang",
+              cxx: "clang++",
+            }
+          - {
+              name: "GCC build",
+              cc: "gcc",
+              cxx: "g++",
+            }
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Print environment
+        run: |
+          echo github.event.action: ${{ github.event.action }}
+          echo github.event_name: ${{ github.event_name }}
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build cmake clang libsdl2-dev libsdl2-2.0-0
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt-get install ninja-build cmake gcc-9 g++-9
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90 --slave /usr/bin/g++ g++ /usr/bin/g++-9 --slave /usr/bin/gcov gcov /usr/bin/gcov-9
+          cmake_version=$(curl --silent "https://api.github.com/repos/Kitware/CMake/releases/latest" | sed -n 's/.*tag_name":\s"\(.*\)".*/\1/p' | head -2 | cut -c 2-)
+          echo cmake download latest v$cmake_version version
+          wget https://github.com/Kitware/CMake/releases/download/v$cmake_version/cmake-$cmake_version-Linux-x86_64.sh
+          chmod +x cmake-$cmake_version-Linux-x86_64.sh
+          sudo mkdir /opt/cmake
+          sudo ./cmake-$cmake_version-Linux-x86_64.sh --prefix=/opt/cmake --skip-license
+          sudo update-alternatives --install /usr/bin/cmake cmake /opt/cmake/bin/cmake 1 --force
+          ninja --version
+          cmake --version
+          gcc --version
+          clang --version
+
+      - name: Configure
+        shell: bash
+        run: |
+          cmake -H. -Bbuild -G "Ninja"
+
+      - name: Build
+        shell: bash
+        run: |
+          cmake --build build
+
+
