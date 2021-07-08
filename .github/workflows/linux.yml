@@ -27,16 +27,11 @@ jobs:
           echo github.event.action: ${{ github.event.action }}
           echo github.event_name: ${{ github.event_name }}
 
-      - name: Install Dependencies
+      - name: Install Base Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install ninja-build cmake clang libsdl2-dev libsdl2-2.0-0
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-          sudo apt-get update
-          sudo apt-get install ninja-build cmake gcc-9 g++-9
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90 --slave /usr/bin/g++ g++ /usr/bin/g++-9 --slave /usr/bin/gcov gcov /usr/bin/gcov-9
+          sudo apt-get install ninja-build libsdl2-dev libsdl2-2.0-0
           cmake_version=$(curl --silent "https://api.github.com/repos/Kitware/CMake/releases/latest" | sed -n 's/.*tag_name":\s"\(.*\)".*/\1/p' | head -2 | cut -c 2-)
-          echo cmake download latest v$cmake_version version
           wget https://github.com/Kitware/CMake/releases/download/v$cmake_version/cmake-$cmake_version-Linux-x86_64.sh
           chmod +x cmake-$cmake_version-Linux-x86_64.sh
           sudo mkdir /opt/cmake
@@ -44,8 +39,24 @@ jobs:
           sudo update-alternatives --install /usr/bin/cmake cmake /opt/cmake/bin/cmake 1 --force
           ninja --version
           cmake --version
-          gcc --version
+
+      - name: Install Clang Dependencies
+        if: startsWith(matrix.config.name, 'Clang')
+        run: |
+          sudo apt-get update
+          sudo apt-get install clang
           clang --version
+
+      - name: Install GCC Dependencies
+        if: startsWith(matrix.config.name, 'GCC')
+        run: |
+          sudo apt-get update
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt-get install clang
+          sudo apt-get install ninja-build cmake gcc-9 g++-9
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90 --slave /usr/bin/g++ g++ /usr/bin/g++-9 --slave /usr/bin/gcov gcov /usr/bin/gcov-9
+          gcc --version
 
       - name: Configure
         shell: bash
