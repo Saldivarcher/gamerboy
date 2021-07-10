@@ -5,19 +5,40 @@ namespace gb {
 CPU::CPU(NoMbc &c, Memory &m) : m_cartridge(c), m_memory(m) { m_pc = 0x0; }
 
 void CPU::cycle() {
-  uint8_t opcode = cycle_read(m_pc++);
+  uint8_t opcode = read_memory(m_pc++);
   if (opcode_map.count(opcode)) {
     auto method_ptr = opcode_map.find(opcode)->second;
     (this->*method_ptr)(opcode);
   }
 }
 
-uint8_t CPU::cycle_read(uint16_t address) {
+uint8_t CPU::read_memory(uint16_t address) {
   uint8_t ret = m_memory.read_memory(address);
   return ret;
 }
 
+void CPU::write_memory(uint16_t address, uint8_t value) {
+  m_memory.write_memory(address, value);
+}
+
+bool CPU::condition_code(uint8_t opcode) {
+  uint8_t f = m_registers[Registers::AF].get_lower_value();
+  switch (get_conditional_code(opcode)) {
+  case 0:
+    return !(f & Flags::ZERO_FLAG);
+  case 1:
+    return (f & Flags::ZERO_FLAG);
+  case 2:
+    return !(f & Flags::CARRY_FLAG);
+  case 3:
+    return (f & Flags::CARRY_FLAG);
+  }
+
+  return false;
+}
+
 // Opcode: 0x00
+// Flags: ----
 // No operation
 void CPU::op_nop(uint8_t opcode) {}
 
@@ -25,8 +46,8 @@ void CPU::op_nop(uint8_t opcode) {}
 // rr=nn (rr may be BC,DE,HL or SP)
 void CPU::op_ld_rr_d16(uint8_t opcode) {
   auto compose_word = [&, this]() -> uint16_t {
-    uint16_t value = cycle_read(m_pc++);
-    value |= cycle_read(m_pc++) << 8;
+    uint16_t value = read_memory(m_pc++);
+    value |= read_memory(m_pc++) << 8;
     return value;
   };
 
@@ -36,28 +57,63 @@ void CPU::op_ld_rr_d16(uint8_t opcode) {
 }
 
 // Opcode: x02, 0x12
+// Flags: ----
 // (BC)=A && (DE)=A
 void CPU::op_ld_drr_a(uint8_t opcode) {
   uint8_t register_id = get_register(opcode);
   uint16_t reg = m_registers[register_id];
-  m_memory.write_memory(reg, opcode);
+  write_memory(reg, opcode);
 }
 
 // Opcode: 0x0A, 0x1A
+// Flags: ----
 // A=(BC), A=(DE)
 void CPU::op_ld_a_drr(uint8_t opcode) {
   uint8_t register_id = get_register(opcode);
   m_registers[Registers::AF] &= 0xFF;
-  m_registers[Registers::AF] |= cycle_read(m_registers[register_id]) << 8;
+  m_registers[Registers::AF] |= read_memory(m_registers[register_id]) << 8;
+}
+
+// Opcode: 0x22
+// Flags: ----
+// (HL)=A, HL=HL+1
+void CPU::op_ld_dhli_a(uint8_t opcode) {
+  write_memory(m_registers[Registers::HL]++,
+               m_registers[Registers::AF].get_upper_value());
+}
+
+// Opcode: 0x2A
+// Flags: ----
+// A=[HL], HL=HL+1
+void CPU::op_ld_a_dhli(uint8_t opcode) {
+  m_registers[Registers::AF].set_upper_value(
+      read_memory(m_registers[Registers::HL]++));
+}
+
+// Opcode: 0x32
+// Flags: ----
+// (HL)=A, HL=HL-1
+void CPU::op_ld_dhld_a(uint8_t opcode) {
+  write_memory(m_registers[Registers::HL]--,
+               m_registers[Registers::AF].get_upper_value());
+}
+
+// Opcode: 0x3A
+// Flags: ----
+// A=[HL], HL=HL-1
+void CPU::op_ld_a_dhld(uint8_t opcode) {
+  m_registers[Registers::AF].set_upper_value(
+      read_memory(m_registers[Registers::HL]--));
 }
 
 // Opcode: 0x08
+// Flags: ----
 // (nn)=SP
 void CPU::op_ld_da16_sp(uint8_t opcode) {
-  uint16_t address = cycle_read(m_pc++);
-  address |= cycle_read(m_pc++) << 8;
-  m_memory.write_memory(address, m_registers[Registers::SP] & 0xFF);
-  m_memory.write_memory(address, m_registers[Registers::SP] >> 8);
+  uint16_t address = read_memory(m_pc++);
+  address |= read_memory(m_pc++) << 8;
+  write_memory(address, m_registers[Registers::SP] & 0xFF);
+  write_memory(address, m_registers[Registers::SP] >> 8);
 }
 
 // Opcode: x6
@@ -65,7 +121,7 @@ void CPU::op_ld_da16_sp(uint8_t opcode) {
 void CPU::op_ld_hr_d8(uint8_t opcode) {
   uint8_t register_id = get_register(opcode);
   m_registers[register_id] &= 0xFF;
-  m_registers[register_id] |= cycle_read(m_pc++) << 8;
+  m_registers[register_id] |= read_memory(m_pc++) << 8;
 }
 
 // Opcode: xE
@@ -73,7 +129,7 @@ void CPU::op_ld_hr_d8(uint8_t opcode) {
 void CPU::op_ld_lr_d8(uint8_t opcode) {
   uint8_t register_id = get_register(opcode);
   m_registers[register_id] &= 0xFF;
-  m_registers[register_id] |= cycle_read(m_pc++);
+  m_registers[register_id] |= read_memory(m_pc++);
 }
 
 // Opcode: x3
@@ -155,7 +211,7 @@ void CPU::op_dec_lr(uint8_t opcode) {
 void CPU::op_ld_da8_a(uint8_t opcode) {
   uint16_t address = 0xFF00 + m_memory.read_memory(m_pc++);
   uint8_t reg = m_registers[Registers::AF] >> 8;
-  m_memory.write_memory(address, reg);
+  write_memory(address, reg);
 }
 
 // Opcode: 7x
@@ -283,6 +339,21 @@ void CPU::op_add_hl_rr(uint8_t opcode) {
   m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG,
                                       (rr & 0xFFF) + (hl + 0xFFF) > 0xFFF);
   m_registers[Registers::HL].set_word(result);
+}
+
+// Opcode: 0x18
+// Flags: ----
+// relative jump to nn (PC=PC+8-bit signed)
+// jr PC+dd
+void CPU::op_jr_r8(uint8_t opcode) {
+  m_pc = static_cast<int8_t>(read_memory(m_pc) + 1);
+}
+
+void CPU::op_jr_cc_r8(uint8_t opcode) {
+  int8_t offset = static_cast<int8_t>(read_memory(m_pc++));
+  if (condition_code(opcode)) {
+    m_pc += offset;
+  }
 }
 
 void CPU::op_stop(uint8_t opcode) {}

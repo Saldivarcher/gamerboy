@@ -34,8 +34,12 @@ public:
   void cycle();
 
 private:
-  uint8_t cycle_read(uint16_t address);
+  uint8_t read_memory(uint16_t address);
+  void write_memory(uint16_t address, uint8_t value);
+
+  bool condition_code(uint8_t opcode);
   inline uint8_t get_register(uint8_t opcode) { return (opcode >> 4) + 1; }
+  inline uint8_t get_conditional_code(uint8_t opcode) { return (opcode >> 3); }
 
   uint16_t m_pc;
   uint8_t m_interrupt_enable;
@@ -68,6 +72,10 @@ private:
   void op_ld_rr_d16(uint8_t opcode);
   void op_ld_drr_a(uint8_t opcode);
   void op_ld_a_drr(uint8_t opcode);
+  void op_ld_dhli_a(uint8_t opcode);
+  void op_ld_a_dhli(uint8_t opcode);
+  void op_ld_dhld_a(uint8_t opcode);
+  void op_ld_a_dhld(uint8_t opcode);
 
   // Inc and Dec 16 bit
   void op_inc_rr(uint8_t opcode);
@@ -89,6 +97,10 @@ private:
 
   // Add
   void op_add_hl_rr(uint8_t opcode);
+
+  // Jumps
+  void op_jr_r8(uint8_t opcode);
+  void op_jr_cc_r8(uint8_t opcode);
 
   void op_stop(uint8_t opcode);
 
@@ -119,6 +131,7 @@ private:
       {0x15, &CPU::op_dec_hr},
       {0x16, &CPU::op_ld_hr_d8},
       {0x17, &CPU::op_rla},
+      {0x18, &CPU::op_jr_r8},
       {0x19, &CPU::op_add_hl_rr},
       {0x1A, &CPU::op_ld_a_drr},
       {0x1B, &CPU::op_dec_rr},
@@ -127,21 +140,30 @@ private:
       {0x1E, &CPU::op_ld_lr_d8},
       {0x1F, &CPU::op_rra},
 
+      {0x20, &CPU::op_jr_cc_r8},
       {0x21, &CPU::op_ld_rr_d16},
+      {0x22, &CPU::op_ld_dhli_a},
       {0x23, &CPU::op_inc_rr},
       {0x24, &CPU::op_inc_hr},
       {0x25, &CPU::op_dec_hr},
       {0x26, &CPU::op_ld_hr_d8},
+      {0x28, &CPU::op_jr_cc_r8},
       {0x29, &CPU::op_add_hl_rr},
+      {0x2A, &CPU::op_ld_a_dhli},
       {0x2B, &CPU::op_dec_rr},
       {0x2C, &CPU::op_inc_lr},
       {0x2D, &CPU::op_dec_lr},
       {0x2E, &CPU::op_ld_lr_d8},
 
+      {0x30, &CPU::op_jr_cc_r8},
       {0x31, &CPU::op_ld_rr_d16},
+      {0x22, &CPU::op_ld_dhld_a},
+      {0x23, &CPU::op_inc_rr},
       {0x33, &CPU::op_inc_rr},
       {0x34, &CPU::op_inc_hr},
+      {0x38, &CPU::op_jr_cc_r8},
       {0x39, &CPU::op_add_hl_rr},
+      {0x3A, &CPU::op_ld_a_dhld},
       {0x3B, &CPU::op_dec_rr},
       {0x3D, &CPU::op_dec_hr},
 
