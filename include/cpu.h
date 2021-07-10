@@ -76,10 +76,13 @@ private:
   void op_ld_a_dhli(uint8_t opcode);
   void op_ld_dhld_a(uint8_t opcode);
   void op_ld_a_dhld(uint8_t opcode);
+  void op_ld_dhl_d8(uint8_t opcode);
 
   // Inc and Dec 16 bit
   void op_inc_rr(uint8_t opcode);
   void op_dec_rr(uint8_t opcode);
+  void op_inc_dhl(uint8_t opcode);
+  void op_dec_dhl(uint8_t opcode);
 
   // Inc and Dec 8 bit high reg
   void op_inc_hr(uint8_t opcode);
@@ -102,6 +105,9 @@ private:
   void op_jr_r8(uint8_t opcode);
   void op_jr_cc_r8(uint8_t opcode);
 
+  void op_daa(uint8_t opcode);
+  void op_cpl(uint8_t opcode);
+  void op_scf(uint8_t opcode);
   void op_stop(uint8_t opcode);
 
   // clang-format off
@@ -147,6 +153,7 @@ private:
       {0x24, &CPU::op_inc_hr},
       {0x25, &CPU::op_dec_hr},
       {0x26, &CPU::op_ld_hr_d8},
+      {0x27, &CPU::op_daa},
       {0x28, &CPU::op_jr_cc_r8},
       {0x29, &CPU::op_add_hl_rr},
       {0x2A, &CPU::op_ld_a_dhli},
@@ -154,13 +161,16 @@ private:
       {0x2C, &CPU::op_inc_lr},
       {0x2D, &CPU::op_dec_lr},
       {0x2E, &CPU::op_ld_lr_d8},
+      {0x2F, &CPU::op_cpl},
 
       {0x30, &CPU::op_jr_cc_r8},
       {0x31, &CPU::op_ld_rr_d16},
-      {0x22, &CPU::op_ld_dhld_a},
-      {0x23, &CPU::op_inc_rr},
+      {0x32, &CPU::op_ld_dhld_a},
       {0x33, &CPU::op_inc_rr},
-      {0x34, &CPU::op_inc_hr},
+      {0x34, &CPU::op_inc_dhl},
+      {0x35, &CPU::op_dec_dhl},
+      {0x36, &CPU::op_ld_dhl_d8},
+      {0x37, &CPU::op_scf},
       {0x38, &CPU::op_jr_cc_r8},
       {0x39, &CPU::op_add_hl_rr},
       {0x3A, &CPU::op_ld_a_dhld},

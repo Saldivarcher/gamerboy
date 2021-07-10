@@ -106,6 +106,14 @@ void CPU::op_ld_a_dhld(uint8_t opcode) {
       read_memory(m_registers[Registers::HL]--));
 }
 
+// Opcode: 0x36
+// Flags: ----
+// (HL)=n
+void CPU::op_ld_dhl_d8(uint8_t opcode) {
+  uint8_t address = read_memory(m_pc++);
+  write_memory(m_registers[Registers::HL], address);
+}
+
 // Opcode: 0x08
 // Flags: ----
 // (nn)=SP
@@ -146,16 +154,46 @@ void CPU::op_dec_rr(uint8_t opcode) {
   m_registers[register_id]--;
 }
 
+// Opcode: 0x34
+// Flags: z0h-
+// (HL)=(HL)+1
+void CPU::op_inc_dhl(uint8_t opcode) {
+  uint8_t value = read_memory(m_registers[Registers::HL]) + 1;
+  write_memory(m_registers[Registers::HL], value);
+
+  m_registers[Registers::AF].set_flag(Flags::SUBTRACT_FLAG, false);
+  m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG,
+                                      (value & 0x0F) == 0);
+  m_registers[Registers::AF].set_flag(Flags::CARRY_FLAG, (value & 0xFF) == 0);
+}
+
+// Opcode: 0x35
+// Flags: z1h-
+// (HL)=(HL)-1
+void CPU::op_dec_dhl(uint8_t opcode) {
+  uint8_t value = read_memory(m_registers[Registers::HL]) - 1;
+  write_memory(m_registers[Registers::HL], value);
+
+  m_registers[Registers::AF].set_flag(Flags::SUBTRACT_FLAG, true);
+  m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG,
+                                      (value & 0x0F) == 0);
+  m_registers[Registers::AF].set_flag(Flags::CARRY_FLAG, (value & 0xFF) == 0);
+}
+
 // Opcode: x4
 // Flags: z0h-
-// r=r+1 && (HL)=(HL)+1
+// r=r+1
 void CPU::op_inc_hr(uint8_t opcode) {
   uint8_t register_id = get_register(opcode);
   m_registers[register_id] += 0x100;
 
-  m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG, false);
-  m_registers[Registers::AF].set_flag(Flags::ZERO_FLAG, false);
   m_registers[Registers::AF].set_flag(Flags::SUBTRACT_FLAG, false);
+
+  bool has_half_carry = ((m_registers[register_id] & 0x0F00) == 0);
+  m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG, has_half_carry);
+
+  bool has_zero = ((m_registers[register_id] & 0xFF00) == 0);
+  m_registers[Registers::AF].set_flag(Flags::ZERO_FLAG, has_zero);
 }
 
 // Opcode: x5
@@ -165,9 +203,13 @@ void CPU::op_dec_hr(uint8_t opcode) {
   uint8_t register_id = get_register(opcode);
   m_registers[register_id] -= 0x100;
 
-  m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG, false);
-  m_registers[Registers::AF].set_flag(Flags::ZERO_FLAG, false);
   m_registers[Registers::AF].set_flag(Flags::SUBTRACT_FLAG, true);
+
+  bool has_half_carry = ((m_registers[register_id] & 0x0F00) == 0);
+  m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG, has_half_carry);
+
+  bool has_zero = ((m_registers[register_id] & 0xFF00) == 0);
+  m_registers[Registers::AF].set_flag(Flags::ZERO_FLAG, has_zero);
 }
 
 void CPU::op_inc_lr(uint8_t opcode) {
@@ -349,11 +391,61 @@ void CPU::op_jr_r8(uint8_t opcode) {
   m_pc = static_cast<int8_t>(read_memory(m_pc) + 1);
 }
 
+// Opcode: 0x20, 0x28, 0x30, 0x38
+// Flags: ----
+// conditional jump if nz,z,nc,c
 void CPU::op_jr_cc_r8(uint8_t opcode) {
   int8_t offset = static_cast<int8_t>(read_memory(m_pc++));
   if (condition_code(opcode)) {
     m_pc += offset;
   }
+}
+
+// Opcode: 0x27
+// Flags: z-0c
+// decimal adjust A
+void CPU::op_daa(uint8_t opcode) {
+  uint8_t a = m_registers[Registers::AF].get_upper_value();
+  uint8_t f = m_registers[Registers::AF].get_lower_value();
+
+  uint8_t carry = (f & Flags::CARRY_FLAG) ? 0x60 : 0x00;
+  bool half_carry = (f & Flags::HALF_CARRY_FLAG);
+  bool subtract = (f & Flags::SUBTRACT_FLAG);
+
+  if (!subtract) {
+    if ((a & 0x0F) > 0x09)
+      carry |= 0x06;
+    if (a > 0x99)
+      carry |= 0x60;
+    a += carry;
+  } else {
+    a -= carry;
+  }
+
+  m_registers[Registers::AF].set_flag(Flags::CARRY_FLAG, carry >= 0x60);
+  m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG, false);
+  m_registers[Registers::AF].set_flag(Flags::ZERO_FLAG, a == 0x00);
+
+  m_registers[Registers::AF].set_upper_value(a);
+}
+
+// Opcode: 0x2F
+// Flags: -11-
+// A = A xor FF
+void CPU::op_cpl(uint8_t opcode) {
+  uint8_t a = ~(m_registers[Registers::AF].get_upper_value());
+  m_registers[Registers::AF].set_upper_value(a);
+
+  m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG, true);
+  m_registers[Registers::AF].set_flag(Flags::SUBTRACT_FLAG, true);
+}
+
+// Opcode: 0x37
+// Flags: -001
+void CPU::op_scf(uint8_t opcode) {
+  m_registers[Registers::AF].set_flag(Flags::CARRY_FLAG, true);
+  m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG, false);
+  m_registers[Registers::AF].set_flag(Flags::SUBTRACT_FLAG, false);
 }
 
 void CPU::op_stop(uint8_t opcode) {}
