@@ -215,7 +215,7 @@ void CPU::op_dec_hr(uint8_t opcode) {
 void CPU::op_inc_lr(uint8_t opcode) {
   uint8_t register_id = get_register(opcode);
   uint8_t value = m_registers[register_id].get_lower_value() + 1;
-  m_registers[register_id].set_low_value(value);
+  m_registers[register_id].set_lower_value(value);
 
   m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG, false);
   m_registers[Registers::AF].set_flag(Flags::ZERO_FLAG, false);
@@ -233,7 +233,7 @@ void CPU::op_inc_lr(uint8_t opcode) {
 void CPU::op_dec_lr(uint8_t opcode) {
   uint8_t register_id = get_register(opcode);
   uint8_t value = m_registers[register_id].get_lower_value() - 1;
-  m_registers[register_id].set_low_value(value);
+  m_registers[register_id].set_lower_value(value);
 
   m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG, false);
   m_registers[Registers::AF].set_flag(Flags::ZERO_FLAG, false);
@@ -254,6 +254,92 @@ void CPU::op_ld_da8_a(uint8_t opcode) {
   uint16_t address = 0xFF00 + m_memory.read_memory(m_pc++);
   uint8_t reg = m_registers[Registers::AF] >> 8;
   write_memory(address, reg);
+}
+
+// Opcode: 0x41
+void CPU::op_ld_b_c(uint8_t opcode) {
+  uint8_t c = m_registers[Registers::BC].get_lower_value();
+  m_registers[Registers::BC].set_upper_value(c);
+}
+
+// Opcode: 0x42
+void CPU::op_ld_b_d(uint8_t opcode) {
+  uint8_t d = m_registers[Registers::DE].get_upper_value();
+  m_registers[Registers::BC].set_upper_value(d);
+}
+
+// Opcode: 0x43
+void CPU::op_ld_b_e(uint8_t opcode) {
+  uint8_t e = m_registers[Registers::DE].get_lower_value();
+  m_registers[Registers::BC].set_upper_value(e);
+}
+
+// Opcode: 0x44
+void CPU::op_ld_b_h(uint8_t opcode) {
+  uint8_t h = m_registers[Registers::HL].get_upper_value();
+
+  m_registers[Registers::BC].set_upper_value(h);
+}
+
+// Opcode: 0x45
+void CPU::op_ld_b_l(uint8_t opcode) {
+  uint8_t l = m_registers[Registers::HL].get_lower_value();
+  m_registers[Registers::BC].set_upper_value(l);
+}
+
+// Opcode: 0x46
+void CPU::op_ld_b_dhl(uint8_t opcode) {
+  uint8_t value = read_memory(m_registers[Registers::HL]);
+  m_registers[Registers::BC].set_upper_value(value);
+}
+
+// Opcode: 0x47
+void CPU::op_ld_b_a(uint8_t opcode) {
+  uint8_t a = m_registers[Registers::AF].get_upper_value();
+  m_registers[Registers::BC].set_upper_value(a);
+}
+
+// Opcode: 0x48
+void CPU::op_ld_c_b(uint8_t opcode) {
+  uint8_t c = m_registers[Registers::BC].get_lower_value();
+  m_registers[Registers::BC].set_lower_value(c);
+}
+
+// Opcode: 0x4A
+void CPU::op_ld_c_d(uint8_t opcode) {
+  uint8_t d = m_registers[Registers::DE].get_upper_value();
+  m_registers[Registers::BC].set_lower_value(d);
+}
+
+// Opcode: 0x4B
+void CPU::op_ld_c_e(uint8_t opcode) {
+  uint8_t e = m_registers[Registers::DE].get_lower_value();
+  m_registers[Registers::BC].set_lower_value(e);
+}
+
+// Opcode: 0x4C
+void CPU::op_ld_c_h(uint8_t opcode) {
+  uint8_t h = m_registers[Registers::HL].get_upper_value();
+
+  m_registers[Registers::BC].set_lower_value(h);
+}
+
+// Opcode: 0x4D
+void CPU::op_ld_c_l(uint8_t opcode) {
+  uint8_t l = m_registers[Registers::HL].get_lower_value();
+  m_registers[Registers::BC].set_lower_value(l);
+}
+
+// Opcode: 0x4E
+void CPU::op_ld_c_dhl(uint8_t opcode) {
+  uint8_t value = read_memory(m_registers[Registers::HL]);
+  m_registers[Registers::BC].set_lower_value(value);
+}
+
+// Opcode: 0x4F
+void CPU::op_ld_c_a(uint8_t opcode) {
+  uint8_t a = m_registers[Registers::AF].get_upper_value();
+  m_registers[Registers::BC].set_lower_value(a);
 }
 
 // Opcode: 7x
@@ -444,6 +530,17 @@ void CPU::op_cpl(uint8_t opcode) {
 // Flags: -001
 void CPU::op_scf(uint8_t opcode) {
   m_registers[Registers::AF].set_flag(Flags::CARRY_FLAG, true);
+  m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG, false);
+  m_registers[Registers::AF].set_flag(Flags::SUBTRACT_FLAG, false);
+}
+
+// Opcode: 0x3F
+// Flags: -00c
+// cy=cy xor 1
+void CPU::op_ccf(uint8_t opcode) {
+  uint8_t f = m_registers[Registers::AF].get_lower_value();
+  bool compliment = !(f & Flags::CARRY_FLAG);
+  m_registers[Registers::AF].set_flag(Flags::CARRY_FLAG, compliment);
   m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG, false);
   m_registers[Registers::AF].set_flag(Flags::SUBTRACT_FLAG, false);
 }

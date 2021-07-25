@@ -66,7 +66,6 @@ private:
   // Load
   void op_ld_da8_a(uint8_t opcode);
   void op_ld_da16_sp(uint8_t opcode);
-  void op_ld_a_b(uint8_t opcode);
   void op_ld_hr_d8(uint8_t opcode);
   void op_ld_lr_d8(uint8_t opcode);
   void op_ld_rr_d16(uint8_t opcode);
@@ -77,6 +76,23 @@ private:
   void op_ld_dhld_a(uint8_t opcode);
   void op_ld_a_dhld(uint8_t opcode);
   void op_ld_dhl_d8(uint8_t opcode);
+
+  void op_ld_a_b(uint8_t opcode);
+  void op_ld_b_c(uint8_t opcode);
+  void op_ld_b_d(uint8_t opcode);
+  void op_ld_b_e(uint8_t opcode);
+  void op_ld_b_h(uint8_t opcode);
+  void op_ld_b_l(uint8_t opcode);
+  void op_ld_b_dhl(uint8_t opcode);
+  void op_ld_b_a(uint8_t opcode);
+
+  void op_ld_c_b(uint8_t opcode);
+  void op_ld_c_d(uint8_t opcode);
+  void op_ld_c_e(uint8_t opcode);
+  void op_ld_c_h(uint8_t opcode);
+  void op_ld_c_l(uint8_t opcode);
+  void op_ld_c_dhl(uint8_t opcode);
+  void op_ld_c_a(uint8_t opcode);
 
   // Inc and Dec 16 bit
   void op_inc_rr(uint8_t opcode);
@@ -108,6 +124,7 @@ private:
   void op_daa(uint8_t opcode);
   void op_cpl(uint8_t opcode);
   void op_scf(uint8_t opcode);
+  void op_ccf(uint8_t opcode);
   void op_stop(uint8_t opcode);
 
   // clang-format off
@@ -175,7 +192,32 @@ private:
       {0x39, &CPU::op_add_hl_rr},
       {0x3A, &CPU::op_ld_a_dhld},
       {0x3B, &CPU::op_dec_rr},
+      {0x3C, &CPU::op_inc_hr},
       {0x3D, &CPU::op_dec_hr},
+      {0x3E, &CPU::op_ld_hr_d8},
+      {0x3F, &CPU::op_ccf},
+
+      {0x40, &CPU::op_nop},
+
+      // TODO: Think of a way to simplify these load instructions,
+      //       the new way should be generic enough so all simple load
+      //       instructions can use it.
+      {0x41, &CPU::op_ld_b_c},
+      {0x42, &CPU::op_ld_b_d},
+      {0x43, &CPU::op_ld_b_e},
+      {0x44, &CPU::op_ld_b_h},
+      {0x45, &CPU::op_ld_b_l},
+      {0x46, &CPU::op_ld_b_dhl},
+      {0x47, &CPU::op_ld_b_a},
+
+      {0x48, &CPU::op_ld_c_b},
+      {0x49, &CPU::op_nop},
+      {0x4a, &CPU::op_ld_c_d},
+      {0x4b, &CPU::op_ld_c_e},
+      {0x4c, &CPU::op_ld_c_h},
+      {0x4d, &CPU::op_ld_c_l},
+      {0x4e, &CPU::op_ld_c_dhl},
+      {0x4f, &CPU::op_ld_c_a},
 
       {0x78, &CPU::op_ld_a_b},
       {0xE0, &CPU::op_ld_da8_a},
