@@ -46,6 +46,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install clang
           clang --version
+          sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100
 
       - name: Install GCC Dependencies
         if: startsWith(matrix.config.name, 'GCC')
@@ -62,10 +63,13 @@ jobs:
         shell: bash
         run: |
           cmake -H. -Bbuild -G "Ninja"
+        env:
+          CXXFLAGS: -I/usr/include/SDL2 
 
       - name: Build
         shell: bash
         run: |
           cmake --build build
-
+        env:
+          CXXFLAGS: -I/usr/include/SDL2 
 
