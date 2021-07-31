@@ -77,7 +77,6 @@ private:
   void op_ld_a_dhld(uint8_t opcode);
   void op_ld_dhl_d8(uint8_t opcode);
 
-  void op_ld_a_b(uint8_t opcode);
   void op_ld_b_c(uint8_t opcode);
   void op_ld_b_d(uint8_t opcode);
   void op_ld_b_e(uint8_t opcode);
@@ -125,6 +124,22 @@ private:
   void op_ld_l_h(uint8_t opcode);
   void op_ld_l_dhl(uint8_t opcode);
   void op_ld_l_a(uint8_t opcode);
+
+  void op_ld_dhl_b(uint8_t opcode);
+  void op_ld_dhl_c(uint8_t opcode);
+  void op_ld_dhl_d(uint8_t opcode);
+  void op_ld_dhl_e(uint8_t opcode);
+  void op_ld_dhl_h(uint8_t opcode);
+  void op_ld_dhl_l(uint8_t opcode);
+  void op_ld_dhl_a(uint8_t opcode);
+
+  void op_ld_a_b(uint8_t opcode);
+  void op_ld_a_c(uint8_t opcode);
+  void op_ld_a_d(uint8_t opcode);
+  void op_ld_a_e(uint8_t opcode);
+  void op_ld_a_h(uint8_t opcode);
+  void op_ld_a_l(uint8_t opcode);
+  void op_ld_a_dhl(uint8_t opcode);
 
   // Inc and Dec 16 bit
   void op_inc_rr(uint8_t opcode);
@@ -287,7 +302,24 @@ private:
       {0x6E, &CPU::op_ld_l_dhl},
       {0x6F, &CPU::op_ld_l_a},
 
+      {0x70, &CPU::op_ld_dhl_b},
+      {0x71, &CPU::op_ld_dhl_c},
+      {0x72, &CPU::op_ld_dhl_d},
+      {0x73, &CPU::op_ld_dhl_e},
+      {0x74, &CPU::op_ld_dhl_h},
+      {0x75, &CPU::op_ld_dhl_l},
+      {0x76, &CPU::op_nop},
+      {0x77, &CPU::op_ld_dhl_a},
+
       {0x78, &CPU::op_ld_a_b},
+      {0x79, &CPU::op_ld_a_c},
+      {0x7A, &CPU::op_ld_a_d},
+      {0x7B, &CPU::op_ld_a_e},
+      {0x7C, &CPU::op_ld_a_h},
+      {0x7D, &CPU::op_ld_a_l},
+      {0x7E, &CPU::op_ld_a_dhl},
+      {0x7F, &CPU::op_nop},
+
       {0xE0, &CPU::op_ld_da8_a},
   };
   // clang-format on

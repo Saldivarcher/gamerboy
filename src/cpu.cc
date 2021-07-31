@@ -508,11 +508,88 @@ void CPU::op_ld_l_a(uint8_t opcode) {
   m_registers[Registers::HL].set_lower_register(a);
 }
 
-// Opcode: 7x
-// (HL) = r
+// Opcode: 0x70
+void CPU::op_ld_dhl_b(uint8_t opcode) {
+  uint8_t b = m_registers[Registers::BC].get_upper_register();
+  write_memory(m_registers[Registers::HL], b);
+}
+
+// Opcode: 0x71
+void CPU::op_ld_dhl_c(uint8_t opcode) {
+  uint8_t c = m_registers[Registers::DE].get_upper_register();
+  write_memory(m_registers[Registers::HL], c);
+}
+
+// Opcode: 0x72
+void CPU::op_ld_dhl_d(uint8_t opcode) {
+  uint8_t d = m_registers[Registers::DE].get_upper_register();
+  write_memory(m_registers[Registers::HL], d);
+}
+
+// Opcode: 0x73
+void CPU::op_ld_dhl_e(uint8_t opcode) {
+  uint8_t e = m_registers[Registers::DE].get_lower_register();
+  write_memory(m_registers[Registers::HL], e);
+}
+
+// Opcode: 0x74
+void CPU::op_ld_dhl_h(uint8_t opcode) {
+  uint8_t h = m_registers[Registers::HL].get_upper_register();
+  write_memory(m_registers[Registers::HL], h);
+}
+
+// Opcode: 0x75
+void CPU::op_ld_dhl_l(uint8_t opcode) {
+  uint8_t l = m_registers[Registers::HL].get_lower_register();
+  write_memory(m_registers[Registers::HL], l);
+}
+
+// Opcode: 0x77
+void CPU::op_ld_dhl_a(uint8_t opcode) {
+  uint8_t a = m_registers[Registers::AF].get_upper_register();
+  write_memory(m_registers[Registers::HL], a);
+}
+
+// Opcode: 0x78
 void CPU::op_ld_a_b(uint8_t opcode) {
   uint8_t b = m_registers[Registers::BC].get_upper_register();
   m_registers[Registers::AF].set_upper_register(b);
+}
+
+// Opcode: 0x79
+void CPU::op_ld_a_c(uint8_t opcode) {
+  uint8_t c = m_registers[Registers::BC].get_lower_register();
+  m_registers[Registers::AF].set_upper_register(c);
+}
+
+// Opcode: 0x7A
+void CPU::op_ld_a_d(uint8_t opcode) {
+  uint8_t d = m_registers[Registers::DE].get_upper_register();
+  m_registers[Registers::AF].set_upper_register(d);
+}
+
+// Opcode: 0x7B
+void CPU::op_ld_a_e(uint8_t opcode) {
+  uint8_t e = m_registers[Registers::DE].get_lower_register();
+  m_registers[Registers::AF].set_upper_register(e);
+}
+
+// Opcode: 0x7C
+void CPU::op_ld_a_h(uint8_t opcode) {
+  uint8_t h = m_registers[Registers::HL].get_upper_register();
+  m_registers[Registers::AF].set_upper_register(h);
+}
+
+// Opcode: 0x7D
+void CPU::op_ld_a_l(uint8_t opcode) {
+  uint8_t l = m_registers[Registers::HL].get_lower_register();
+  m_registers[Registers::AF].set_upper_register(l);
+}
+
+// Opcode: 0x7E
+void CPU::op_ld_a_dhl(uint8_t opcode) {
+  uint8_t value = read_memory(m_registers[Registers::HL]);
+  m_registers[Registers::AF].set_upper_register(value);
 }
 
 // Opcode: 0x07
