@@ -789,7 +789,7 @@ void CPU::op_adc_a_dhl(uint8_t opcode) {
 
 void CPU::op_adc_a_a(uint8_t opcode) {
   int8_t a = m_registers[Registers::AF].get_upper_register();
-  add_a_r(a);
+  adc_a_r(a);
 }
 
 void CPU::add_a_r(uint8_t value) {
@@ -819,6 +819,115 @@ void CPU::adc_a_r(uint8_t value) {
   m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG,
                                       (a & 0xF) + (value & 0xF) + carry > 0xF);
   m_registers[Registers::AF].set_flag(Flags::CARRY_FLAG, word_result > 0xFF);
+}
+
+void CPU::op_sub_a_b(uint8_t opcode) {
+  int8_t b = m_registers[Registers::BC].get_upper_register();
+  sub_a_r(b);
+}
+
+void CPU::op_sub_a_c(uint8_t opcode) {
+  int8_t c = m_registers[Registers::BC].get_lower_register();
+  sub_a_r(c);
+}
+
+void CPU::op_sub_a_d(uint8_t opcode) {
+  int8_t d = m_registers[Registers::DE].get_upper_register();
+  sub_a_r(d);
+}
+
+void CPU::op_sub_a_e(uint8_t opcode) {
+  int8_t e = m_registers[Registers::DE].get_lower_register();
+  sub_a_r(e);
+}
+
+void CPU::op_sub_a_h(uint8_t opcode) {
+  int8_t h = m_registers[Registers::HL].get_upper_register();
+  sub_a_r(h);
+}
+
+void CPU::op_sub_a_l(uint8_t opcode) {
+  int8_t l = m_registers[Registers::HL].get_lower_register();
+  sub_a_r(l);
+}
+
+void CPU::op_sub_a_dhl(uint8_t opcode) {
+  uint8_t value = read_memory(m_registers[Registers::HL]);
+  sub_a_r(value);
+}
+
+void CPU::op_sub_a_a(uint8_t opcode) {
+  int8_t a = m_registers[Registers::AF].get_upper_register();
+  sub_a_r(a);
+}
+
+void CPU::op_sbc_a_b(uint8_t opcode) {
+  int8_t b = m_registers[Registers::BC].get_upper_register();
+  sbc_a_r(b);
+}
+
+void CPU::op_sbc_a_c(uint8_t opcode) {
+  int8_t c = m_registers[Registers::BC].get_lower_register();
+  sbc_a_r(c);
+}
+
+void CPU::op_sbc_a_d(uint8_t opcode) {
+  int8_t d = m_registers[Registers::DE].get_upper_register();
+  sbc_a_r(d);
+}
+
+void CPU::op_sbc_a_e(uint8_t opcode) {
+  int8_t e = m_registers[Registers::DE].get_lower_register();
+  sbc_a_r(e);
+}
+
+void CPU::op_sbc_a_h(uint8_t opcode) {
+  int8_t h = m_registers[Registers::HL].get_upper_register();
+  sbc_a_r(h);
+}
+
+void CPU::op_sbc_a_l(uint8_t opcode) {
+  int8_t l = m_registers[Registers::HL].get_lower_register();
+  sbc_a_r(l);
+}
+
+void CPU::op_sbc_a_dhl(uint8_t opcode) {
+  uint8_t value = read_memory(m_registers[Registers::HL]);
+  sbc_a_r(value);
+}
+
+void CPU::op_sbc_a_a(uint8_t opcode) {
+  int8_t a = m_registers[Registers::AF].get_upper_register();
+  sbc_a_r(a);
+}
+
+void CPU::sub_a_r(uint8_t value) {
+  uint8_t a = m_registers[Registers::AF].get_upper_register();
+  uint8_t result = a + value;
+
+  m_registers[Registers::AF].set_upper_register(result);
+  m_registers[Registers::AF].set_flag(Flags::ZERO_FLAG, result == 0);
+  m_registers[Registers::AF].set_flag(Flags::SUBTRACT_FLAG, true);
+  m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG,
+                                      (a & 0xF) - (value & 0xF) < 0x0);
+  m_registers[Registers::AF].set_flag(Flags::CARRY_FLAG, a < value);
+}
+
+void CPU::sbc_a_r(uint8_t value) {
+  uint8_t a = m_registers[Registers::AF].get_upper_register();
+  uint8_t f = m_registers[Registers::AF].get_lower_register();
+  uint8_t carry = (f & Flags::CARRY_FLAG) ? 0x60 : 0x00;
+
+  int16_t word_result = a - value - carry;
+  uint8_t result = a - value - carry;
+
+  m_registers[Registers::AF].set_upper_register(result);
+
+  m_registers[Registers::AF].set_flag(Flags::ZERO_FLAG, result == 0);
+  m_registers[Registers::AF].set_flag(Flags::SUBTRACT_FLAG, true);
+  m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG, word_result < 0);
+  m_registers[Registers::AF].set_flag(Flags::CARRY_FLAG,
+                                      ((a & 0xF) - (value & 0xF) - carry) < 0);
 }
 
 // Opcode: 0x18

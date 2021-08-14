@@ -185,6 +185,28 @@ private:
   void add_a_r(uint8_t value);
   void adc_a_r(uint8_t value);
 
+  // Sub
+  void op_sub_a_b(uint8_t opcode);
+  void op_sub_a_c(uint8_t opcode);
+  void op_sub_a_d(uint8_t opcode);
+  void op_sub_a_e(uint8_t opcode);
+  void op_sub_a_h(uint8_t opcode);
+  void op_sub_a_l(uint8_t opcode);
+  void op_sub_a_dhl(uint8_t opcode);
+  void op_sub_a_a(uint8_t opcode);
+
+  void op_sbc_a_b(uint8_t opcode);
+  void op_sbc_a_c(uint8_t opcode);
+  void op_sbc_a_d(uint8_t opcode);
+  void op_sbc_a_e(uint8_t opcode);
+  void op_sbc_a_h(uint8_t opcode);
+  void op_sbc_a_l(uint8_t opcode);
+  void op_sbc_a_dhl(uint8_t opcode);
+  void op_sbc_a_a(uint8_t opcode);
+
+  void sub_a_r(uint8_t value);
+  void sbc_a_r(uint8_t value);
+
   // Jumps
   void op_jr_r8(uint8_t opcode);
   void op_jr_cc_r8(uint8_t opcode);
@@ -358,6 +380,24 @@ private:
       {0x8D, &CPU::op_adc_a_l},
       {0x8E, &CPU::op_adc_a_dhl},
       {0x8F, &CPU::op_adc_a_a},
+
+      {0x90, &CPU::op_sub_a_b},
+      {0x91, &CPU::op_sub_a_c},
+      {0x92, &CPU::op_sub_a_d},
+      {0x93, &CPU::op_sub_a_e},
+      {0x94, &CPU::op_sub_a_h},
+      {0x95, &CPU::op_sub_a_l},
+      {0x96, &CPU::op_sub_a_dhl},
+      {0x97, &CPU::op_sub_a_a},
+
+      {0x98, &CPU::op_sbc_a_b},
+      {0x99, &CPU::op_sbc_a_c},
+      {0x9A, &CPU::op_sbc_a_d},
+      {0x9B, &CPU::op_sbc_a_e},
+      {0x9C, &CPU::op_sbc_a_h},
+      {0x9D, &CPU::op_sbc_a_l},
+      {0x9E, &CPU::op_sbc_a_dhl},
+      {0x9F, &CPU::op_sbc_a_a},
 
       {0xE0, &CPU::op_ld_da8_a},
   };
