@@ -164,6 +164,27 @@ private:
   // Add
   void op_add_hl_rr(uint8_t opcode);
 
+  void op_add_a_b(uint8_t opcode);
+  void op_add_a_c(uint8_t opcode);
+  void op_add_a_d(uint8_t opcode);
+  void op_add_a_e(uint8_t opcode);
+  void op_add_a_h(uint8_t opcode);
+  void op_add_a_l(uint8_t opcode);
+  void op_add_a_dhl(uint8_t opcode);
+  void op_add_a_a(uint8_t opcode);
+
+  void op_adc_a_b(uint8_t opcode);
+  void op_adc_a_c(uint8_t opcode);
+  void op_adc_a_d(uint8_t opcode);
+  void op_adc_a_e(uint8_t opcode);
+  void op_adc_a_h(uint8_t opcode);
+  void op_adc_a_l(uint8_t opcode);
+  void op_adc_a_dhl(uint8_t opcode);
+  void op_adc_a_a(uint8_t opcode);
+
+  void add_a_r(uint8_t value);
+  void adc_a_r(uint8_t value);
+
   // Jumps
   void op_jr_r8(uint8_t opcode);
   void op_jr_cc_r8(uint8_t opcode);
@@ -319,6 +340,24 @@ private:
       {0x7D, &CPU::op_ld_a_l},
       {0x7E, &CPU::op_ld_a_dhl},
       {0x7F, &CPU::op_nop},
+
+      {0x80, &CPU::op_add_a_b},
+      {0x81, &CPU::op_add_a_c},
+      {0x82, &CPU::op_add_a_d},
+      {0x83, &CPU::op_add_a_e},
+      {0x84, &CPU::op_add_a_h},
+      {0x85, &CPU::op_add_a_l},
+      {0x86, &CPU::op_add_a_dhl},
+      {0x87, &CPU::op_add_a_a},
+
+      {0x88, &CPU::op_adc_a_b},
+      {0x89, &CPU::op_adc_a_c},
+      {0x8A, &CPU::op_adc_a_d},
+      {0x8B, &CPU::op_adc_a_e},
+      {0x8C, &CPU::op_adc_a_h},
+      {0x8D, &CPU::op_adc_a_l},
+      {0x8E, &CPU::op_adc_a_dhl},
+      {0x8F, &CPU::op_adc_a_a},
 
       {0xE0, &CPU::op_ld_da8_a},
   };
