@@ -226,8 +226,18 @@ private:
   void op_xor_a_dhl(uint8_t opcode);
   void op_xor_a_a(uint8_t opcode);
 
+  void op_or_a_b(uint8_t opcode);
+  void op_or_a_c(uint8_t opcode);
+  void op_or_a_d(uint8_t opcode);
+  void op_or_a_e(uint8_t opcode);
+  void op_or_a_h(uint8_t opcode);
+  void op_or_a_l(uint8_t opcode);
+  void op_or_a_dhl(uint8_t opcode);
+  void op_or_a_a(uint8_t opcode);
+
   void and_a_r(uint8_t value);
   void xor_a_r(uint8_t value);
+  void or_a_r(uint8_t value);
 
   // Jumps
   void op_jr_r8(uint8_t opcode);
@@ -438,6 +448,15 @@ private:
       {0xAD, &CPU::op_xor_a_l},
       {0xAE, &CPU::op_xor_a_dhl},
       {0xAF, &CPU::op_xor_a_a},
+
+      {0xB0, &CPU::op_or_a_b},
+      {0xB1, &CPU::op_or_a_c},
+      {0xB2, &CPU::op_or_a_d},
+      {0xB3, &CPU::op_or_a_e},
+      {0xB4, &CPU::op_or_a_h},
+      {0xB5, &CPU::op_or_a_l},
+      {0xB6, &CPU::op_or_a_dhl},
+      {0xB7, &CPU::op_or_a_a},
 
       {0xE0, &CPU::op_ld_da8_a},
   };
