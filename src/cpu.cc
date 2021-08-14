@@ -930,6 +930,108 @@ void CPU::sbc_a_r(uint8_t value) {
                                       ((a & 0xF) - (value & 0xF) - carry) < 0);
 }
 
+void CPU::op_and_a_b(uint8_t opcode) {
+  int8_t b = m_registers[Registers::BC].get_upper_register();
+  and_a_r(b);
+}
+
+void CPU::op_and_a_c(uint8_t opcode) {
+  int8_t c = m_registers[Registers::BC].get_lower_register();
+  and_a_r(c);
+}
+
+void CPU::op_and_a_d(uint8_t opcode) {
+  int8_t d = m_registers[Registers::DE].get_upper_register();
+  sub_a_r(d);
+}
+
+void CPU::op_and_a_e(uint8_t opcode) {
+  int8_t e = m_registers[Registers::DE].get_lower_register();
+  and_a_r(e);
+}
+
+void CPU::op_and_a_h(uint8_t opcode) {
+  int8_t h = m_registers[Registers::HL].get_upper_register();
+  sub_a_r(h);
+}
+
+void CPU::op_and_a_l(uint8_t opcode) {
+  int8_t l = m_registers[Registers::HL].get_lower_register();
+  and_a_r(l);
+}
+
+void CPU::op_and_a_dhl(uint8_t opcode) {
+  uint8_t value = read_memory(m_registers[Registers::HL]);
+  and_a_r(value);
+}
+
+void CPU::op_and_a_a(uint8_t opcode) {
+  int8_t a = m_registers[Registers::AF].get_upper_register();
+  and_a_r(a);
+}
+
+void CPU::op_xor_a_b(uint8_t opcode) {
+  int8_t b = m_registers[Registers::BC].get_upper_register();
+  xor_a_r(b);
+}
+
+void CPU::op_xor_a_c(uint8_t opcode) {
+  int8_t c = m_registers[Registers::BC].get_lower_register();
+  xor_a_r(c);
+}
+
+void CPU::op_xor_a_d(uint8_t opcode) {
+  int8_t d = m_registers[Registers::DE].get_upper_register();
+  xor_a_r(d);
+}
+
+void CPU::op_xor_a_e(uint8_t opcode) {
+  int8_t e = m_registers[Registers::DE].get_lower_register();
+  xor_a_r(e);
+}
+
+void CPU::op_xor_a_h(uint8_t opcode) {
+  int8_t h = m_registers[Registers::HL].get_upper_register();
+  xor_a_r(h);
+}
+
+void CPU::op_xor_a_l(uint8_t opcode) {
+  int8_t l = m_registers[Registers::HL].get_lower_register();
+  xor_a_r(l);
+}
+
+void CPU::op_xor_a_dhl(uint8_t opcode) {
+  uint8_t value = read_memory(m_registers[Registers::HL]);
+  xor_a_r(value);
+}
+
+void CPU::op_xor_a_a(uint8_t opcode) {
+  int8_t a = m_registers[Registers::AF].get_upper_register();
+  xor_a_r(a);
+}
+
+void CPU::and_a_r(uint8_t value) {
+  uint8_t a = m_registers[Registers::AF].get_upper_register();
+  uint8_t result = a & value;
+
+  m_registers[Registers::AF].set_upper_register(result);
+  m_registers[Registers::AF].set_flag(Flags::ZERO_FLAG, result == 0);
+  m_registers[Registers::AF].set_flag(Flags::SUBTRACT_FLAG, false);
+  m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG, true);
+  m_registers[Registers::AF].set_flag(Flags::CARRY_FLAG, false);
+}
+
+void CPU::xor_a_r(uint8_t value) {
+  uint8_t a = m_registers[Registers::AF].get_upper_register();
+  uint8_t result = a ^ value;
+
+  m_registers[Registers::AF].set_upper_register(result);
+  m_registers[Registers::AF].set_flag(Flags::ZERO_FLAG, result == 0);
+  m_registers[Registers::AF].set_flag(Flags::SUBTRACT_FLAG, false);
+  m_registers[Registers::AF].set_flag(Flags::HALF_CARRY_FLAG, false);
+  m_registers[Registers::AF].set_flag(Flags::CARRY_FLAG, false);
+}
+
 // Opcode: 0x18
 // Flags: ----
 // relative jump to nn (PC=PC+8-bit signed)

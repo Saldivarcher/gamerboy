@@ -207,6 +207,28 @@ private:
   void sub_a_r(uint8_t value);
   void sbc_a_r(uint8_t value);
 
+  // Binary operations
+  void op_and_a_b(uint8_t opcode);
+  void op_and_a_c(uint8_t opcode);
+  void op_and_a_d(uint8_t opcode);
+  void op_and_a_e(uint8_t opcode);
+  void op_and_a_h(uint8_t opcode);
+  void op_and_a_l(uint8_t opcode);
+  void op_and_a_dhl(uint8_t opcode);
+  void op_and_a_a(uint8_t opcode);
+
+  void op_xor_a_b(uint8_t opcode);
+  void op_xor_a_c(uint8_t opcode);
+  void op_xor_a_d(uint8_t opcode);
+  void op_xor_a_e(uint8_t opcode);
+  void op_xor_a_h(uint8_t opcode);
+  void op_xor_a_l(uint8_t opcode);
+  void op_xor_a_dhl(uint8_t opcode);
+  void op_xor_a_a(uint8_t opcode);
+
+  void and_a_r(uint8_t value);
+  void xor_a_r(uint8_t value);
+
   // Jumps
   void op_jr_r8(uint8_t opcode);
   void op_jr_cc_r8(uint8_t opcode);
@@ -398,6 +420,24 @@ private:
       {0x9D, &CPU::op_sbc_a_l},
       {0x9E, &CPU::op_sbc_a_dhl},
       {0x9F, &CPU::op_sbc_a_a},
+
+      {0xA0, &CPU::op_and_a_b},
+      {0xA1, &CPU::op_and_a_c},
+      {0xA2, &CPU::op_and_a_d},
+      {0xA3, &CPU::op_and_a_e},
+      {0xA4, &CPU::op_and_a_h},
+      {0xA5, &CPU::op_and_a_l},
+      {0xA6, &CPU::op_and_a_dhl},
+      {0xA7, &CPU::op_and_a_a},
+
+      {0xA8, &CPU::op_xor_a_b},
+      {0xA9, &CPU::op_xor_a_c},
+      {0xAA, &CPU::op_xor_a_d},
+      {0xAB, &CPU::op_xor_a_e},
+      {0xAC, &CPU::op_xor_a_h},
+      {0xAD, &CPU::op_xor_a_l},
+      {0xAE, &CPU::op_xor_a_dhl},
+      {0xAF, &CPU::op_xor_a_a},
 
       {0xE0, &CPU::op_ld_da8_a},
   };
