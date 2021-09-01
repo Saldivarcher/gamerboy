@@ -235,9 +235,21 @@ private:
   void op_or_a_dhl(uint8_t opcode);
   void op_or_a_a(uint8_t opcode);
 
+  void op_cp_a_b(uint8_t opcode);
+  void op_cp_a_c(uint8_t opcode);
+  void op_cp_a_d(uint8_t opcode);
+  void op_cp_a_e(uint8_t opcode);
+  void op_cp_a_h(uint8_t opcode);
+  void op_cp_a_l(uint8_t opcode);
+  void op_cp_a_dhl(uint8_t opcode);
+  void op_cp_a_a(uint8_t opcode);
+
+  // Helper methods that the opcodes call, to try and avoid
+  // duplicate code.
   void and_a_r(uint8_t value);
   void xor_a_r(uint8_t value);
   void or_a_r(uint8_t value);
+  void cp_a_r(uint8_t value);
 
   // Jumps
   void op_jr_r8(uint8_t opcode);
@@ -457,6 +469,15 @@ private:
       {0xB5, &CPU::op_or_a_l},
       {0xB6, &CPU::op_or_a_dhl},
       {0xB7, &CPU::op_or_a_a},
+
+      {0xB8, &CPU::op_cp_a_b},
+      {0xB9, &CPU::op_cp_a_c},
+      {0xBA, &CPU::op_cp_a_d},
+      {0xBB, &CPU::op_cp_a_e},
+      {0xBC, &CPU::op_cp_a_h},
+      {0xBD, &CPU::op_cp_a_l},
+      {0xBE, &CPU::op_cp_a_dhl},
+      {0xBF, &CPU::op_cp_a_a},
 
       {0xE0, &CPU::op_ld_da8_a},
   };
