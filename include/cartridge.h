@@ -2,15 +2,16 @@
 
 #include <array>
 #include <cstddef>
+#include <cstdint>
 #include <vector>
 
 namespace gb {
 
 class CartridgeInformation {
 public:
-  static constexpr std::array<u_int32_t, 6> ram_sizes{0x0,    0x800,   0x2000,
+  static constexpr std::array<uint32_t, 6> ram_sizes{0x0,    0x800,   0x2000,
                                                       0x8000, 0x20000, 0x10000};
-  enum class CartridgeType : u_int8_t {
+  enum class CartridgeType : uint8_t {
     GB_NO_MBC,
     GB_MBC1,
     GB_MBC3,
@@ -18,20 +19,20 @@ public:
 
   CartridgeInformation(const std::vector<std::byte> &rom) {
 
-    auto rom_cast = [&](u_int16_t address) -> u_int16_t {
-      return static_cast<u_int16_t>(rom[address]);
+    auto rom_cast = [&](uint16_t address) -> uint16_t {
+      return static_cast<uint16_t>(rom[address]);
     };
 
     m_ram_size = ram_sizes[rom_cast(0x149)];
     m_version = rom_cast(0x14C);
   }
 
-  u_int32_t get_ram_size() { return m_ram_size; }
-  u_int8_t get_version() { return m_version; }
+  uint32_t get_ram_size() { return m_ram_size; }
+  uint8_t get_version() { return m_version; }
 
 private:
-  u_int32_t m_ram_size;
-  u_int8_t m_version;
+  uint32_t m_ram_size;
+  uint8_t m_version;
 };
 
 class Cartridge {
@@ -41,8 +42,8 @@ public:
 
   virtual ~Cartridge() = default;
 
-  virtual u_int8_t read(u_int16_t addr) = 0;
-  virtual void write(u_int16_t addr, u_int8_t value) = 0;
+  virtual uint8_t read(uint16_t addr) = 0;
+  virtual void write(uint16_t addr, uint8_t value) = 0;
 
 protected:
   const std::vector<std::byte> &m_rom_data;
@@ -55,8 +56,8 @@ class NoMbc : protected Cartridge {
 public:
   NoMbc(const std::vector<std::byte> &data) : Cartridge(data) {}
 
-  virtual u_int8_t read(u_int16_t addr) override;
-  virtual void write(u_int16_t addr, u_int8_t value) override;
+  virtual uint8_t read(uint16_t addr) override;
+  virtual void write(uint16_t addr, uint8_t value) override;
 };
 
 } // namespace gb

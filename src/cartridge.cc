@@ -2,10 +2,10 @@
 
 namespace gb {
 
-u_int8_t NoMbc::read(u_int16_t addr) {
-  return static_cast<u_int8_t>(m_rom_data.at(addr));
+uint8_t NoMbc::read(uint16_t addr) {
+  return static_cast<uint8_t>(m_rom_data.at(addr));
 }
 
-void NoMbc::write(u_int16_t addr, u_int8_t value) { return; }
+void NoMbc::write(uint16_t addr, uint8_t value) { return; }
 
 } // namespace gb
