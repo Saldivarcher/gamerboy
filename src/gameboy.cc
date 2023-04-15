@@ -23,7 +23,12 @@ Gameboy::Gameboy(const char *path)
                                     SDL_TEXTUREACCESS_STREAMING, 320, 288));
 }
 
-Gameboy::~Gameboy() { SDL_Quit(); }
+Gameboy::~Gameboy() {
+  SDL_DestroyTexture(m_texture.get());
+  SDL_DestroyRenderer(m_renderer.get());
+  SDL_DestroyWindow(m_window.get());
+  SDL_Quit();
+}
 
 void Gameboy::on() {
   while (!did_quit()) {
