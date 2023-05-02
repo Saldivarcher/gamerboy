@@ -4,7 +4,7 @@ namespace gb {
 
 Gameboy::Gameboy(const char *path)
     : m_rom_path(path), m_rom_data(utility::get_rom_data(m_rom_path)),
-      m_cartridge(m_rom_data), m_cpu(m_cartridge, m_mem), m_mem(m_cartridge) {
+      m_cartridge(m_rom_data), m_cpu(*this), m_mem(*this) {
 
   SDL_Init(SDL_INIT_VIDEO);
 

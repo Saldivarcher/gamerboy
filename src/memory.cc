@@ -1,7 +1,9 @@
 #include "memory.h"
 
+#include "gameboy.h"
+
 namespace gb {
-Memory::Memory(NoMbc &c) : m_cartridge(c) {
+Memory::Memory(Gameboy &gb) : m_gb(gb), m_cartridge(gb.get_cartridge()) {
   m_boot_rom = utility::get_boot_rom_data();
 }
 

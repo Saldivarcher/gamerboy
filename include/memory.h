@@ -1,23 +1,27 @@
 #pragma once
+
+#include "cartridge.h"
+#include "utility.h"
+
 #include <array>
 #include <cstdint>
 #include <functional>
 #include <map>
 #include <utility>
 
-#include "cartridge.h"
-#include "utility.h"
-
 namespace gb {
+
+class Gameboy;
 
 class Memory {
 public:
-  Memory(NoMbc &c);
+  Memory(Gameboy &gb);
 
   uint8_t read_memory(uint16_t addr);
   void write_memory(uint16_t addr, uint8_t value);
 
 private:
+  Gameboy &m_gb;
   NoMbc &m_cartridge;
 
   // Gameboys have a 8192 bytes of ram.

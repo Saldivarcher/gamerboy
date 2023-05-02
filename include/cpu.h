@@ -10,6 +10,8 @@
 
 namespace gb {
 
+class Gameboy;
+
 constexpr uint8_t WORD_REGISTER_LENGTH = 5;
 
 enum Registers {
@@ -29,7 +31,7 @@ enum Flags {
 
 class CPU {
 public:
-  CPU(NoMbc &, Memory &);
+  CPU(Gameboy &gb);
 
   void cycle();
 
@@ -46,6 +48,7 @@ private:
 
   std::array<Register, WORD_REGISTER_LENGTH> m_registers;
 
+  Gameboy &m_gb;
   NoMbc &m_cartridge;
   Memory &m_memory;
 

@@ -1,8 +1,13 @@
 #include "cpu.h"
 
+#include "gameboy.h"
+
 namespace gb {
 
-CPU::CPU(NoMbc &c, Memory &m) : m_cartridge(c), m_memory(m) { m_pc = 0x0; }
+CPU::CPU(Gameboy &gb)
+    : m_gb(gb), m_cartridge(m_gb.get_cartridge()), m_memory(m_gb.get_memory()) {
+  m_pc = 0x0;
+}
 
 void CPU::cycle() {
   uint8_t opcode = read_memory(m_pc++);

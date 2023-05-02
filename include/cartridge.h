@@ -10,7 +10,7 @@ namespace gb {
 class CartridgeInformation {
 public:
   static constexpr std::array<uint32_t, 6> ram_sizes{0x0,    0x800,   0x2000,
-                                                      0x8000, 0x20000, 0x10000};
+                                                     0x8000, 0x20000, 0x10000};
   enum class CartridgeType : uint8_t {
     GB_NO_MBC,
     GB_MBC1,
