@@ -33,7 +33,7 @@ class CPU {
 public:
   CPU(Gameboy &gb);
 
-  void cycle();
+  uint8_t cycle();
 
 private:
   uint8_t read_memory(uint16_t address);

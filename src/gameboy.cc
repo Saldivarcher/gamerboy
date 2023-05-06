@@ -4,7 +4,7 @@ namespace gb {
 
 Gameboy::Gameboy(const char *path)
     : m_rom_path(path), m_rom_data(utility::get_rom_data(m_rom_path)),
-      m_cartridge(m_rom_data), m_cpu(*this), m_mem(*this) {
+      m_cartridge(m_rom_data), m_cpu(*this), m_mem(*this), m_ppu(*this) {
 
   SDL_Init(SDL_INIT_VIDEO);
 
@@ -48,6 +48,9 @@ void Gameboy::process() {
   }
 }
 
-void Gameboy::run() { m_cpu.cycle(); }
+void Gameboy::run() {
+  m_cycles += m_cpu.cycle();
+  m_ppu.cycle(m_cycles);
+}
 
 } // namespace gb

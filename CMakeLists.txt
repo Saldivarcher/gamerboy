@@ -14,6 +14,7 @@ include_directories(include)
 set(gamerboy_sources
 	src/cartridge.cc
 	src/memory.cc
+	src/ppu.cc
 	src/cpu.cc
 	src/gameboy.cc
 	src/main.cc)
