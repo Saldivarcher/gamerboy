@@ -14,6 +14,7 @@ class Gameboy;
 
 constexpr uint8_t WORD_REGISTER_LENGTH = 5;
 
+// Going to be using double registers (16-byte).
 enum Registers {
   AF,
   BC,
@@ -46,7 +47,7 @@ private:
   uint16_t m_pc;
   uint8_t m_interrupt_enable;
 
-  std::array<Register, WORD_REGISTER_LENGTH> m_registers;
+  std::array<DoubleRegister, WORD_REGISTER_LENGTH> m_registers;
 
   Gameboy &m_gb;
   NoMbc &m_cartridge;

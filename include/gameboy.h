@@ -10,7 +10,6 @@
 #include <vector>
 
 namespace gb {
-
 class Gameboy {
 public:
   Gameboy(const char *path);
@@ -43,5 +42,4 @@ private:
   utility::sdl_renderer_ptr m_renderer = {nullptr, SDL_DestroyRenderer};
   utility::sdl_texture_ptr m_texture = {nullptr, SDL_DestroyTexture};
 };
-
 } // namespace gb

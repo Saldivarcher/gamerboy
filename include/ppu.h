@@ -1,6 +1,7 @@
 #pragma once
 
 #include "memory.h"
+#include "registers.h"
 
 #include <cstdint>
 
@@ -34,6 +35,7 @@ constexpr uint16_t LINE_CYCLES = 456;
 constexpr uint32_t FRAME_CYCLES = 70224;
 
 class Gameboy;
+
 class PPU {
 public:
   PPU(Gameboy &gb);
@@ -46,6 +48,19 @@ private:
 
   Gameboy &m_gb;
   Memory &m_mem;
+
+  Register m_lcd_control;
+  Register m_lcd_status;
+  Register m_scroll_y;
+  Register m_scroll_x;
+  Register m_line_y;
+  Register m_line_y_compare;
+  Register m_direct_mem_access;
+  Register m_backgroud_palette;
+  Register m_object_palette_0;
+  Register m_object_palette_1;
+  Register m_window_y;
+  Register m_window_x;
 };
 
 } // namespace gb

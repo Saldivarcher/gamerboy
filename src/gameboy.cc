@@ -24,6 +24,8 @@ Gameboy::Gameboy(const char *path)
 }
 
 Gameboy::~Gameboy() {
+  // TODO: Not sure why I have to manually use the destroy functions now,
+  // something happened with `std::unique_ptr`?
   SDL_DestroyTexture(m_texture.get());
   SDL_DestroyRenderer(m_renderer.get());
   SDL_DestroyWindow(m_window.get());

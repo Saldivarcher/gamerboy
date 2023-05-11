@@ -4,10 +4,30 @@
 
 namespace gb {
 
+// 1-byte Register.
 class Register {
 public:
   Register() = default;
-  ~Register() = default;
+  Register(uint8_t v) : m_value(v) {}
+
+  void set_register(uint8_t value) { m_value = value; }
+  uint8_t get_register() { return m_value; }
+
+  void set_bit(uint8_t bit, bool set) {
+    auto set_bit = [&] { m_value = m_value | (1 << bit); };
+    auto clear_bit = [&] { m_value = m_value & ~(1 << bit); };
+    set ? set_bit() : clear_bit();
+  }
+
+private:
+  uint8_t m_value = 0;
+};
+
+// 2-byte Register.
+class DoubleRegister {
+public:
+  DoubleRegister() = default;
+  ~DoubleRegister() = default;
 
   uint16_t get_word() const {
     return static_cast<uint16_t>((m_high << 8) | m_low);
@@ -32,45 +52,45 @@ public:
     m_low = lower;
   }
 
-  Register &operator=(uint16_t word) {
+  DoubleRegister &operator=(uint16_t word) {
     set_word(word);
     return *this;
   }
 
-  Register &operator++(int) {
+  DoubleRegister &operator++(int) {
     uint16_t word = get_word();
     set_word(++word);
     return *this;
   }
 
-  Register &operator--(int) {
+  DoubleRegister &operator--(int) {
     uint16_t word = get_word();
     set_word(--word);
     return *this;
   }
 
-  Register &operator+=(uint16_t value) {
+  DoubleRegister &operator+=(uint16_t value) {
     uint16_t word = get_word();
     word += value;
     set_word(word);
     return *this;
   }
 
-  Register &operator-=(uint16_t value) {
+  DoubleRegister &operator-=(uint16_t value) {
     uint16_t word = get_word();
     word -= value;
     set_word(word);
     return *this;
   }
 
-  Register &operator&=(uint16_t value) {
+  DoubleRegister &operator&=(uint16_t value) {
     uint16_t word = get_word();
     word &= value;
     set_word(word);
     return *this;
   }
 
-  Register &operator|=(uint16_t value) {
+  DoubleRegister &operator|=(uint16_t value) {
     uint16_t word = get_word();
     word |= value;
     set_word(word);
@@ -80,6 +100,7 @@ public:
   operator uint16_t() const { return get_word(); }
 
 private:
+  // TODO: Use `Register` class?
   uint8_t m_high = 0;
   uint8_t m_low = 0;
 };
